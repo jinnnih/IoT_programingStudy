@@ -79,8 +79,13 @@ def unfollow():
 
     return jsonify(user)
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+## 과제 1. 유저 정보 조회 API
+@app.route('/user/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    if user_id not in app.users:
+        return '사용자가 존재하지 않습니다.', 400
+    
+    return jsonify(app.users[user_id])
 
 
 @app.route('/timeline/<int:user_id>', methods=['GET'])
@@ -96,3 +101,8 @@ def timeline(user_id):
         'user_id' : user_id,
         'timeline' : timeline
     })
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+
