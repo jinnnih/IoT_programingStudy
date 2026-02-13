@@ -102,6 +102,20 @@ def timeline(user_id):
         'timeline' : timeline
     })
 
+@app.route('/users', methods=['GET'])
+def get_users():
+    result = []
+
+    for user in app.users.values():
+        filtered_user = {
+            key: value
+            for key, value in user.items()
+            if key != 'password'
+        }
+        result.append(filtered_user)
+
+    return jsonify(result)
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
