@@ -116,6 +116,22 @@ def get_users():
 
     return jsonify(result)
 
+@app.route('/tweet', methods=['DELETE'])
+def delete_tweet():
+    payload = request.json
+    user_id = int(payload['id'])
+    tweet_text = payload['tweet']
+
+    if user_id not in app.users:
+        return '사용자가 존재하지 않습니다.', 400
+
+    for tweet in app.tweets:
+        if tweet['user_id'] == user_id and tweet['tweet'] == tweet_text:
+            app.tweets.remove(tweet)
+            return '', 200
+
+    return '해당 트윗이 존재하지 않습니다.', 400
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
