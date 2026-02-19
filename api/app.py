@@ -44,6 +44,8 @@ def get_user(user_id):
        'email'   : user[2],
        'profile' : user[3]
    } if user else None
+ 
+
 
 def insert_tweet(user_tweet):
    with current_app.database.connect() as conn:
@@ -128,6 +130,16 @@ def create_app(test_config=None):
        new_user_id = insert_user(new_user)
        new_user = get_user(new_user_id)
        return jsonify(new_user)
+
+
+   @app.route('/user/<int:user_id>', methods=['GET'])
+   def get_user_info(user_id):
+        user = get_user(user_id)
+        if user is None:
+            return '사용자가 존재하지 않습니다.', 404
+        return jsonify(user)
+
+
 
    @app.route('/tweet', methods=['POST'])
    def tweet():
