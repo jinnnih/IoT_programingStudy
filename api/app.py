@@ -46,6 +46,21 @@ def get_user(user_id):
    } if user else None
  
 
+def update_user(user_id, data):
+    with current_app.database.begin() as conn:
+        result = conn.execute(text("""
+            UPDATE users
+            SET name = :name,
+                profile = :profile
+            WHERE id = :user_id
+        """), {
+            'name' : data['name'],
+            'profile' : data['profile'],
+            'user_id' : user_id
+        })
+    return result.rowcount
+
+
 
 def insert_tweet(user_tweet):
    with current_app.database.connect() as conn:
@@ -164,6 +179,16 @@ def create_app(test_config=None):
         if user is None:
             return '사용자가 존재하지 않습니다.', 404
         return jsonify(user)
+
+    
+   @app.route('/user/<int:user_id>', methods=['PUT'])
+   def change_user_info(user_id):
+        data = request.json
+        result = update_user(user_id, data)
+        if result == 0:
+            return '사용자가 존재하지 않습니다.', 404
+        return jsonify(get_user(user_id))
+
 
 
    @app.route('/users', methods=['GET'])
