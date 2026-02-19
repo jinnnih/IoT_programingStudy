@@ -104,6 +104,24 @@ def get_timeline(user_id):
    } for tweet in timeline]
 
 
+def get_all_users():
+    with current_app.database.connect() as conn:
+        users = conn.execute(text("""
+          SELECT
+          id,
+          name,
+          email,
+          profile
+          FROM users
+        """)).fetchall()
+
+    return [{
+        'id'    : user[0],
+        'name'  : user[1],
+        'email' : user[2],
+        'profile': user[3]   
+    } for user in users]
+
 
 
 
@@ -138,6 +156,11 @@ def create_app(test_config=None):
         if user is None:
             return '사용자가 존재하지 않습니다.', 404
         return jsonify(user)
+
+
+   @app.route('/users', methods=['GET'])
+   def user_list():
+    return jsonify(get_all_users())
 
 
 
